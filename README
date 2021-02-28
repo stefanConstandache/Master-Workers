@@ -1,0 +1,184 @@
+SCALABILITATE (rezultat checker):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~ ESTABLISHING BASE TIME ~~
+Test input1.txt took 0.0028684139251708984 seconds
+Test input2.txt took 0.18707990646362305 seconds
+Test input3.txt took 0.5161964893341064 seconds
+Test input4.txt took 9.199312210083008 seconds
+Test input5.txt took 13.143273115158081 seconds
+
+~ RUNNING TESTS ~
+Test input1.txt took 0.7672257423400879 seconds
+Test input2.txt took 0.7689270973205566 seconds
+Test input3.txt took 1.1197443008422852 seconds
+Test input4.txt took 6.585416078567505 seconds
+Test input5.txt took 8.697745323181152 seconds
+
+~~ COMPARING ~~
+Test input1.out is correct    SCORE = 2
+Test input2.out is correct    SCORE = 4
+Test input3.out is correct    SCORE = 6
+Test input4.out is correct    SCORE = 8
+Test input5.out is correct    SCORE = 10
+
+~ DOES IT READ IN PARALLEL? ~
+IT DOES
+SCORE = 10
+
+~ DOES IT SCALE? ~~
+IT DOES :)
+SCORE = 10
+
+Final grade =  10
+
+
+In main
+~~~~~~~
+
+	- Creez cele 5 procese.	
+
+Procesul MASTER
+~~~~~~~~~~~~~~~
+
+	- In procesul Master, dupa numele fisierului de input
+	calculez numele fisierului de output.
+	
+	- Deschid 4 threaduri care o sa citeasca fisierul si o sa 
+	trimita workerilor paragrafele respective.
+	
+	- La sfarsit dupa ce s-a terminat de procesat
+	tot fisierul scriu in fisierul de output textul procesat.
+	
+	- In fiecare worker pornesc un thread care
+	va primi paragraful procesat din procesul Master.
+	
+In threadurile procesului MASTER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Deschid fisierul de input in fiecare thread.
+	
+	- Primul thread parcurge tot fisierul si afla cate linii are acesta,
+	dupa care mut cursorul la inceputul fisierului.
+	
+	- Celelalte threaduri asteapta ca primul thread sa calculeze numarul de linii din fisier.
+	
+	- Incep citirea fisierului in paralel.
+	
+	- Caut prima aparitie a liniei corespunzatoare 
+	paragrafului care va fi procesat de threadul curent.
+	
+	- Copiez in paragraful care va fi trimis liniile corespunzatoare din fisier.
+	
+	- Trimit catre workerul respectiv dimensiunea paragrafului.
+	
+	- Daca dimensiunea paragrafului este mai mare ca 1
+	atunci trimit pe rand linii paragrafului care trebuie procesat.
+	
+	- Astept sa primesc inapoi paragraful procesat.
+	Paragraful procesat o sa fie primit direct la linia corespunzatoare din textul final.
+	
+In WORKERI in threadul care o sa primeasca paragrafele
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Primesc dimensiunea paragrafului.
+	
+	- Daca dimensiunea primita e 1 inseamna ca nu se va mai
+	trimite niciun paragraf catre workerul respectiv si se inchide threadul de citire.
+	
+	- Aloc memorie pentru variabila care va primi paragraful.
+	
+	- Primesc linie cu linie paragraful care trebuie procesat.
+	
+	- Calculez numarul de threaduri care trebuie
+	deschise pentru a procesa paragraful (maxim P - 1).
+	
+	- Pentru a procesa paragrafele in threadurile din workeri
+	folosesc variabile globale care "pointeaza" catre paragraful primit.
+	
+	- Deschid threadurile care o sa proceseze paragraful.
+	
+	- Dupa ce paragraful a fost procesat il trimit inapoi la procesul Master.
+	
+	- Daca s-a primit o linie de paragraf cu tagul 0 inseamna ca
+	era ultima linie de procesat si se iese inchide threadul de citire.
+	
+In threadurile care proceseaza paragrafele HORROR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Se calculeaza ce linii va procesa threadul respectiv.
+	
+	- Threadul proceseaza liniile aferente.
+	
+	- Parcurg linia de procesat caracter cu caracter.
+	
+	- Daca caracterul nu este o vocala si este litera atunci
+	se va copia de doua ori in linia paragrafului care
+	va fi trimis inapoi la Master, altfel se va copia doar o singura data.
+	(literele mari se vor transforma mai intai in litere mici)
+	
+	- Maresc numarul ID-ului threadului actual pentru
+	a continua procesarea paragrafului daca e nevoie.
+	
+In threadurile care proceseaza paragrafele COMEDY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Se calculeaza ce linii va procesa threadul respectiv.
+	
+	- Threadul proceseaza liniile aferente.
+	
+	- Parcurg linia de procesat caracter cu caracter.
+	
+	- Daca caracterul curent este o litera si pozitia acestuia
+	in cuvant este para atunci se va transforma in litera mare.
+	
+	- La terminarea cuvantului resetez pozitia caracterului.
+	
+	- Maresc numarul ID-ului threadului actual pentru
+	a continua procesarea paragrafului daca e nevoie.
+
+In threadurile care proceseaza paragrafele FANTASY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Se calculeaza ce linii va procesa threadul respectiv.
+	
+	- Threadul proceseaza liniile aferente.
+	
+	- Parcurg linia de procesat caracter cu caracter.
+	
+	- Daca este primul caracter din cuvant si acesta este
+	o litera atunci se va transforma in litera mare.
+	
+	- Daca se trece la urmatorul cuvant atunci se reseteaza variabila
+	care anunta ce este primul caracter din cuvant.
+	
+	- Maresc numarul ID-ului threadului actual pentru
+	a continua procesarea paragrafului daca e nevoie.
+
+In threadurile care proceseaza paragrafele SCIENCE-FICTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Se calculeaza ce linii va procesa threadul respectiv.
+	
+	- Threadul proceseaza liniile aferente.
+	
+	- Parcurg caracter cu caracter linia de procesat.
+	
+	- Anunt ca s-a gasit prima litera din cuvantul care trebuie inversat.
+
+	- Anunt ca s-a gasit ultima litera din cuvant.
+	
+	- Pana nu se ajunge la ultima litera din cuvant formez cuvantul in alta variabila.
+	
+	- Daca lungimea cuvantului e mai mare de 1 atunci
+	se copiaza caracterele inversate din variabila
+	care contine cuvantul in paragraful care va fi transmis.
+	
+	- Daca s-a trecut de al 7-lea cuvant atunci resetez valorile.
+	
+	- Daca se ajunge la caracterul "spatiu" se incrementeaza
+	numarul de cuvinte parcurse.
+	
+	- Maresc numarul ID-ului threadului actual pentru
+	a continua procesarea paragrafului daca e nevoie.
+
